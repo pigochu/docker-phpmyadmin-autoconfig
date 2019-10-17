@@ -1,0 +1,7 @@
+{
+    "require": {
+        "docker-php/docker-php": "~2.0.0",
+        "amphp/artax": "^3.0",
+        "amphp/log": "~v1.1.0"
+    }
+}

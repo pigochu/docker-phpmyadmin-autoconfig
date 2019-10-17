@@ -1,0 +1,28 @@
+version: '3.5'
+services:
+        
+    phpmyadmin:
+        image: 'pigochu/phpmyadmin-autoconfig'
+        environment:
+            - PHPMYADMIN_AUTOCONFIG_INSTANCE=phpmyadmin
+        ports:
+              - "9080:80"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+ 
+    db1:
+        image: mariadb
+        labels:
+            - phpmyadmin.autoconfig.target=phpmyadmin
+            - phpmyadmin.autoconfig.cfg.verbose=database-1
+            - phpmyadmin.autoconfig.cfg.AllowNoPassword=true
+        environment:
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    db2:
+        image: mariadb
+        labels:
+            - phpmyadmin.autoconfig.target=phpmyadmin
+            - phpmyadmin.autoconfig.cfg.verbose=database-2
+            - phpmyadmin.autoconfig.cfg.AllowNoPassword=true
+        environment:
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
