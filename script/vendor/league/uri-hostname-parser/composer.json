@@ -1,0 +1,66 @@
+{
+    "name": "league/uri-hostname-parser",
+    "description": "ICANN base hostname parsing implemented in PHP.",
+    "homepage": "https://github.com/thephphleague/uri-hostname-parser",
+    "support": {
+        "issues": "https://github.com/thephphleague/uri-hostname-parser/issues",
+        "source": "https://github.com/thephphleague/uri-hostname-parser"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jeremy Kendall",
+            "homepage": "http://about.me/jeremykendall",
+            "role": "Developer"
+        },
+        {
+            "name": "Ignace Nyamagana Butera",
+            "homepage": "http://nyamsprod.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "https://github.com/phpleague/uri-hostname-parser/graphs/contributors"
+        }
+    ],
+    "bin": [
+        "bin/update-psl-icann-section"
+    ],
+    "keywords": [
+        "Public Suffix List",
+        "ICANN",
+        "domain parsing"
+    ],
+    "require": {
+        "php": ">=7.0",
+        "ext-intl": "*",
+        "psr/simple-cache": "^1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.3",
+        "mikey179/vfsStream": "^1.6",
+        "friendsofphp/php-cs-fixer": "^2.7"
+    },
+    "suggest": {
+        "ext-curl": "To use the bundle cURL HTTP client",
+        "psr/simple-cache-implementation": "To enable using other cache providers"
+    },
+    "autoload": {
+        "psr-4": {
+            "League\\Uri\\": "src"
+        },
+        "files": ["src/functions_include.php"]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "League\\Uri\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-install-cmd": "\\League\\Uri\\Installer\\ICANNSection::update",
+        "post-update-cmd": "\\League\\Uri\\Installer\\ICANNSection::update",
+        "test": "phpunit --coverage-text; php-cs-fixer fix -vv --diff --dry-run --allow-risky=yes",
+        "phpunit": "phpunit --coverage-text",
+        "phpcs": "php-cs-fixer fix -vv --diff --dry-run --allow-risky=yes"
+    }
+}
