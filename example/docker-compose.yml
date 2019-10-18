@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+        
+    phpmyadmin:
+        image: 'pigochu/phpmyadmin-autoconfig'
+        environment:
+            - PHPMYADMIN_AUTOCONFIG_INSTANCE=phpmyadmin
+        ports:
+              - "9080:80"
+        volumes:
+            - /sessions
+            - /var/run/docker.sock:/var/run/docker.sock
+        networks:
+            - default
+            - example
+
+# Please execute the following command
+# docker network create --attachable -d bridge example_net
+networks:
+    example:
+        external:
+            name: example_net

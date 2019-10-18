@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+    nginx:
+        image: nginx:alpine
+        restart: always
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - content:/var/www/html
+        ports:
+              - "9081:80"
+        networks:
+            - default
+        links:
+            - fpmadmin
+    fpmadmin:
+        image: 'pigochu/phpmyadmin-autoconfig:fpm-alpine'
+        environment:
+            - PHPMYADMIN_AUTOCONFIG_INSTANCE=phpmyadmin
+
+        volumes:
+            - /sessions
+            - /var/run/docker.sock:/var/run/docker.sock
+            - content:/var/www/html
+            
+        networks:
+            - default
+            - example
+volumes:
+    # share phpmyadmin /var/www/html for nginx
+    content:
+        
+# Please execute the following command
+# docker network create --attachable -d bridge example_net
+networks:
+    example:
+        external:
+            name: example_net

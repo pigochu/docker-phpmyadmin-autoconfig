@@ -21,6 +21,8 @@ use Symfony\Component\Serializer\Serializer;
 require __DIR__ . '/vendor/autoload.php';
 
 
+sleep(1); // wait official /docker-entrypoint.sh started
+
 $containers = [];
 
 
@@ -39,8 +41,6 @@ if (file_exists('/etc/phpmyadmin/config.autoconfig.inc.php')) {
 EOF;
         file_put_contents("/etc/phpmyadmin/config.inc.php", $append_data, FILE_APPEND);
     }
-    
-
 }
 
 
@@ -58,17 +58,12 @@ EOF;
         foreach($containers as $id => $container) {
             $data .= "\$i++;\n";
             $cfg = $container['cfg'];
-            if(!isset($cfg['host'])) {
-                $cfg['host'] = $id;
-            }
             foreach($cfg as $k=>$v) {
-                
                 if( strtolower($v) === "true") {
                     $v = "true";
                 } else {
                     $v = "\"{$v}\"";
                 }
-                
                 $data .= "\$cfg['Servers'][\$i][\"{$k}\"]=$v;\n";
             }
 
@@ -137,8 +132,18 @@ Amp\Loop::run(function () use($containers) {
                 $target = $value;
             }
         }
+        
+        $id = substr($result['Id'] , 0, 12);
         if(count($config) > 0 && $target !== null) {
-            $containers[substr($result['Id'] , 0, 12)] = [
+            if(!isset($config['host'])) {
+                $config['host'] = $id;
+            }
+            
+            if(isset($config['verbose'])) {
+                $id = $config['verbose'];
+            }
+            
+            $containers[$id] = [
                 "target" => $target,
                 "cfg" => $config
             ];
@@ -173,11 +178,21 @@ Amp\Loop::run(function () use($containers) {
                             $target = $value;
                         }
                 }
+                
+                $id = substr($event->getActor()->getID() , 0, 12);
                 if(count($config) > 0 && $target !== null) {
-                        $containers[ substr($event->getActor()->getID(),0,12) ] = [
-                            "target" => $target,
-                            "cfg" => $config
-                        ];
+                    
+                    if(!isset($config['host'])) {
+                        $config['host'] = $id;
+                    }
+                    if(isset($config['verbose'])) {
+                        $id = $config['verbose'];
+                    }
+
+                    $containers[$id] = [
+                        "target" => $target,
+                        "cfg" => $config
+                    ];
                 }
 
                 modify_config_file($containers);
