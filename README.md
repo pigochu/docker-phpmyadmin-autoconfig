@@ -97,8 +97,8 @@ This example defines two services, db1 and db2, using the official mariadb image
 
 Lables must be defined in db1 and db2, as follows:
 
-- phpmyadmin.autoconfig.target **(必須)** : 這是定義 phpmyadmin 服務的目標名稱 , 上述已經說明要定義環境變數 **PHPMYADMIN_AUTOCONFIG_INSTANCE** 於 myadmin 服務中，這個值也可以是星號 ( * )，例如 phpmyadmin.autoconfig.target=*，當你的環境使用了多個 phpmyadin-autoconfig 的 container 的時候，可以讓這些 container 一併收到事件而進行自動設定。
-- phpmyadmin.autoconfig.cfg.any-key: 這是定義 [phpmyadmin server connection settings](https://docs.phpmyadmin.net/en/latest/config.html#server-connection-settings) 的參數 , 例如 : phpmyadmin.autoconfig.cfg.port=3307 or phpmyadmin.autoconfig.cfg. compress=true，那麼 phpmyadmin 服務偵測到就會自動生成這些設定值了。
+- phpmyadmin.autoconfig.target **(required)** : This is the target name that defines the phpmyadmin service. The above has been explained to define the environment variable **PHPMYADMIN_AUTOCONFIG_INSTANCE** in the phpmyadmin service. This value can also be an asterisk ( * ), for example phpmyadmin.autoconfig.target=*, when your environment uses When multiple phpmyadin-autoconfig containers are used, these containers can be automatically set by receiving events.
+- This is the parameter that defines phpmyadmin connection , for example: phpmyadmin.autoconfig.cfg.port=3307 or phpmyadmin.autoconfig.cfg. compress=true, then the phpmyadmin service will automatically generate these settings when it detects it.
 
 ### Test it !
 
