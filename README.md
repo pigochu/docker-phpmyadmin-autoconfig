@@ -4,7 +4,7 @@ This project is mainly inspired by [treafik](https://hub.docker.com/_/traefik), 
 
 This project is based on the official phpmyadmin. In addition to the additional settings of this project, the other settings are the same as the official ones.
 
-
+[繁體中文說明請按此](./README-zh_TW.md)
 
 ## Supported tags
 
