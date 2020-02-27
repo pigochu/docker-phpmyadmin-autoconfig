@@ -22,7 +22,9 @@ require __DIR__ . '/vendor/autoload.php';
 
 
 sleep(1); // wait official /docker-entrypoint.sh started
-
+if(function_exists("cli_set_process_title")) {
+    cli_set_process_title("phpmyadmin-autoconfig");
+}
 $containers = [];
 
 
@@ -150,7 +152,7 @@ Amp\Loop::run(function () use($containers) {
         }
     }
     
-   modify_config_file($containers);
+    modify_config_file($containers);
     
     /** @var Response $response */
     $filters = rawurlencode('{"event":{"start":true} , "label": {"phpmyadmin.autoconfig.target":true}}');
