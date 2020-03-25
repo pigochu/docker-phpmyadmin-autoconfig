@@ -21,7 +21,7 @@ use Symfony\Component\Serializer\Serializer;
 require __DIR__ . '/vendor/autoload.php';
 
 
-sleep(1); // wait official /docker-entrypoint.sh started
+sleep(2); // wait official /docker-entrypoint.sh started
 if(function_exists("cli_set_process_title")) {
     cli_set_process_title("phpmyadmin-autoconfig");
 }
