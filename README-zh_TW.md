@@ -116,7 +116,10 @@ docker-compose -f docker-composer.db.yml up -d
 
 
 
-
+# Build Sample #
+```
+docker build --no-cache -t pigochu/phpmyadmin-autoconfig:dev -f build/apache/Dockerfile .
+```
 
 # 作者 #
 

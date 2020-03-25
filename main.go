@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"pigolab/docker-phpmyadmin-autoconfig/config"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/events"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	autoconfigFile = "/etc/phpmyadmin/phpmyadmin.autoconfig.php"
+	autoconfigFile = "/etc/phpmyadmin/config.autoconfig.inc"
 	instanceName   = os.Getenv("PHPMYADMIN_AUTOCONFIG_INSTANCE")
 )
 
@@ -24,8 +25,11 @@ func main() {
 		instanceName = "phpmyadmin"
 	}
 	log.Print("Instance Name : ", instanceName)
+	// wait for phpmyadmin init
+	time.Sleep(time.Duration(2) * time.Second)
+	generateConfig()
 
-	// create empty setting to phpmyadmin.autoconfig.php
+	// create empty setting to config.autoconfig.inc
 	config.SyncDbConfig()
 
 	// get running db container
@@ -63,9 +67,9 @@ func main() {
 
 	// event cycle
 	// start => *start
-	// stop => *kill die stop
-	// kill => *kill die
-	// restart => *kill die stop *start restart
+	// stop => kill *die stop
+	// kill => kill *die
+	// restart => kill *die stop *start restart
 	// pause => *pause
 	// resume => *unpause
 	for {
@@ -73,10 +77,11 @@ func main() {
 		case err := <-errs:
 			log.Fatal(err)
 		case msg := <-msgs:
+			log.Print("Container Action : ", msg.Action, ", ID: ", msg.Actor.ID)
 			if msg.Action == "start" || msg.Action == "unpause" {
 				config.AddDbConfig(config.NewConfig(msgToContainer(msg)))
 				config.SyncDbConfig()
-			} else if msg.Action == "pause" || msg.Action == "kill" {
+			} else if msg.Action == "pause" || msg.Action == "die" {
 				config.RemoveDbConfig(msg.Actor.ID)
 				config.SyncDbConfig()
 			}
@@ -87,4 +92,23 @@ func main() {
 func msgToContainer(msg events.Message) types.Container {
 	container := types.Container{ID: msg.ID, Labels: msg.Actor.Attributes}
 	return container
+}
+
+func generateConfig() {
+
+	var configFile = "/etc/phpmyadmin/config.inc.php"
+	phpString := `/* Include autoconfig  */
+	if (file_exists('/etc/phpmyadmin/config.autoconfig.inc.php')) {
+		include('/etc/phpmyadmin/config.autoconfig.inc.php');
+	}`
+
+	f, err := os.OpenFile(configFile, os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	if _, err := f.WriteString(phpString); err != nil {
+		log.Fatal("Can not write to ", configFile, ", because ", err)
+	}
+
 }

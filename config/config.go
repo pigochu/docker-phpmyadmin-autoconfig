@@ -17,7 +17,7 @@ type DbConfig struct {
 }
 
 var (
-	autoconfigFile = "/etc/phpmyadmin/phpmyadmin.autoconfig.php"
+	autoconfigFile = "/etc/phpmyadmin/config.autoconfig.inc.php"
 	dbconfigs      = make(map[string]*DbConfig)
 	mu             sync.Mutex
 )
@@ -74,16 +74,14 @@ func SyncDbConfig() {
 
 		phpString +=
 			`
-	$cfg[$i]["host"]="` + v.ContainerID[0:12] + `";`
+	$i++;
+	$cfg["Servers"][$i]["host"]="` + v.ContainerID[0:12] + `";`
 
 		for cfgKey, cfgValue := range v.Cfg {
 			phpString +=
 				`
-	$cfg[$i]["` + cfgKey + `"]=` + cfgValue + `;`
+	$cfg["Servers"][$i]["` + cfgKey + `"]=` + cfgValue + `;`
 		}
-		phpString += `
-	$i++;
-`
 	}
 
 	err := ioutil.WriteFile(autoconfigFile, []byte(phpString), 0644)
