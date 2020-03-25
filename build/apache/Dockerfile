@@ -1,11 +1,22 @@
-FROM phpmyadmin/phpmyadmin:latest
+# build stage
+FROM golang:1.14-buster as builder
+RUN mkdir /src
+WORKDIR /src
+COPY . /src
+RUN go build -ldflags "-s -w"
 
+# final stage
+FROM phpmyadmin/phpmyadmin:latest
+# PHPMYADMIN_AUTOCONFIG_BIN_VERSION allow go or php
+ENV PHPMYADMIN_AUTOCONFIG_BIN_VERSION=go
 ENV PHPMYADMIN_AUTOCONFIG_INSTANCE=phpmyadmin
 
 COPY script /opt/phpmyadmin-autoconfig
+COPY --from=builder /src/docker-phpmyadmin-autoconfig /opt/phpmyadmin-autoconfig
 
 RUN docker-php-ext-install pcntl && \
-chmod +x /opt/phpmyadmin-autoconfig/*.sh
+chmod +x /opt/phpmyadmin-autoconfig/*.sh && \
+chmod +x /opt/phpmyadmin-autoconfig/docker-phpmyadmin-autoconfig
 
 ENTRYPOINT [ "/opt/phpmyadmin-autoconfig/entrypoint.sh" ]
 CMD ["apache2-foreground"]
