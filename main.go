@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"io/ioutil"
 	"log"
 	"os"
 	"pigolab/docker-phpmyadmin-autoconfig/config"
+	"regexp"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -97,6 +99,13 @@ func msgToContainer(msg events.Message) types.Container {
 func generateConfig() {
 
 	var configFile = "/etc/phpmyadmin/config.inc.php"
+
+	if IsExist("/etc/phpmyadmin/config.autoconfig.inc.php", configFile) {
+		log.Print("No need modify ", configFile)
+
+		return
+	}
+
 	phpString := `/* Include autoconfig  */
 	if (file_exists('/etc/phpmyadmin/config.autoconfig.inc.php')) {
 		include('/etc/phpmyadmin/config.autoconfig.inc.php');
@@ -111,4 +120,18 @@ func generateConfig() {
 		log.Fatal("Can not write to ", configFile, ", because ", err)
 	}
 
+}
+
+// @see https://siongui.github.io/2017/06/05/go-check-if-a-string-exist-in-file/
+func IsExist(str, filepath string) bool {
+	b, err := ioutil.ReadFile(filepath)
+	if err != nil {
+		panic(err)
+	}
+
+	isExist, err := regexp.Match(str, b)
+	if err != nil {
+		panic(err)
+	}
+	return isExist
 }
