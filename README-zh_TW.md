@@ -1,6 +1,6 @@
 # docker phpmyadmin-autoconfig #
 
-這個專案主要是使用過 [treafik](https://hub.docker.com/_/traefik) 而來的靈感，treafik 使用 lables 來達成自動設定 loading blance，我想我也可以讓 phpmyadmin 達成自動增加 db 的設定，這樣我僅需要於我的開發環境部屬一套 phpmyadmin 就能存取各專案的 mysql 了。
+這個專案主要是使用過 [treafik](https://hub.docker.com/_/traefik) 而來的靈感，treafik 使用 labels 來達成自動設定 loading blance，我想我也可以讓 phpmyadmin 達成自動增加 db 的設定，這樣我僅需要於我的開發環境部屬一套 phpmyadmin 就能存取各專案的 mysql 了。
 
 本專案是以官方 phpmyadmin 為基礎，使用方法除了本專案另行增加的設定方式，其他設定都與官方的一樣。
 
